@@ -1,0 +1,55 @@
+import socket
+import ssl
+
+def start_vpn_server():
+    # Create a TCP/IP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    # Bind the socket to the address and port
+    server_address = ('localhost', 10000)
+    server_socket.bind(server_address)
+
+    # Listen for incoming connections
+    server_socket.listen(1)
+
+    print("VPN server is listening on port 10000...")
+
+    while True:
+        # Wait for a connection
+        print("Waiting for a connection...")
+        connection, client_address = server_socket.accept()
+
+        try:
+            print("Connection from:", client_address)
+
+            # Wrap the connection with SSL/TLS
+            ssl_connection = ssl.wrap_socket(connection, server_side=True, certfile='server.crt', keyfile='server.key', ssl_version=ssl.PROTOCOL_TLS)
+
+            while True:
+                # Receive data from the client
+                data = ssl_connection.recv(1024)
+                if data:
+                    print("Received:", data.decode())
+                    # Here you can implement your VPN logic
+
+                    # Replace the VPN configuration here
+                    vpn_config = {
+                        "address": "yas.mani83.shop",
+                        "port": 34585,
+                        "id": "6940a410-39c0-4e1d-a3b2-5d93368f3f05",
+                        "security": "autu",
+                        "type": "none"
+                    }
+
+                    # Use the VPN configuration as needed
+                    print("Using VPN configuration:", vpn_config)
+
+                else:
+                    break
+
+        finally:
+            # Clean up the connection
+            ssl_connection.close()
+
+if __name__ == "__main__":
+    start_vpn_server()
